@@ -1,0 +1,31 @@
+- hosts: 172.31.38.0
+  become: yes
+  tasks:
+    - name: Install apache server
+      yum:
+        name: httpd
+        state: present
+      tags:
+        - install
+    - name: deploy index.html on apache server
+      copy:
+        src: index.html
+        dest: /var/www/html
+      notify:
+        - restart
+      tags:
+        - deploy
+    - name: start and enable
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      tags:
+        - enable
+  handlers:
+    - name: restart
+      service:
+        name: httpd
+        state: restarted
+
+
